@@ -168,7 +168,7 @@
         Ask the counter for your <b>Secret Code</b> after any purchase!
       </div>
       <div class="lock-box">
-        <input type="password" id="code" placeholder="Enter Code" inputmode="text">
+        <input type="password" id="code" placeholder="Enter Code" inputmode="text" autocomplete="new-password" name="random_field_name">
         <button class="unlock-btn" id="unlock">UNLOCK SPIN</button>
       </div>
     </div>
@@ -205,8 +205,9 @@
     if (codeInput.value.toUpperCase() === VALID_CODE) {
       setupArea.style.display = "none";
       spinBtn.disabled = false;
-      spinsAvailable = 1; // Set spin count
+      spinsAvailable = 1; 
       result.textContent = ""; 
+      codeInput.value = ""; // Clear the text immediately
     } else {
       alert('Invalid Code! Please check with the counter.');
       codeInput.value = "";
@@ -216,12 +217,11 @@
   spinBtn.onclick = () => {
     if (spinsAvailable <= 0) return;
     
-    spinsAvailable--; // Use the spin
+    spinsAvailable--; 
     spinBtn.disabled = true;
     result.style.color = "#333";
     result.textContent = "Spinning...";
 
-    // PROBABILITY: 75% Common, 23% Mid, 2% Rare
     const common = [3, 7, 8]; 
     const mid = [1, 2, 4, 5, 6]; 
     let targetIndex;
@@ -232,7 +232,7 @@
     } else if (roll < 0.98) {
       targetIndex = mid[Math.floor(Math.random() * mid.length)];
     } else {
-      targetIndex = 0; // Rare Patishapta
+      targetIndex = 0; 
     }
 
     let currentIndex = 0;
@@ -260,8 +260,7 @@
           setTimeout(() => { document.body.style.background = ""; }, 400);
         }
 
-        // Show the result AND the "No spins left" message
-        result.innerHTML = winMessage + "<br><span style='color:#d32f2f; font-size: 14px;'>No spins left. Buy more to play!</span>";
+        result.innerHTML = winMessage + "<br><span style='color:#d32f2f; font-size: 14px; font-weight: bold;'>No spins left. Buy more to play!</span>";
       }
     }
     runSpin();
