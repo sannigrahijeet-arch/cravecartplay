@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CRAVE CART – Spin & Win</title>
+  <style>
+    /* Phone-first styling */
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Arial Black', sans-serif; 
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      margin: 0;
+      padding: 10px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px;
+      text-align: center;
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      border: 6px solid #ffd700;
+    }
+
+    .promo-banner {
+      background: #ffd700;
+      color: #d32f2f;
+      padding: 12px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      animation: pulse 1.5s infinite;
+      line-height: 1.2;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+    
+    .how-to-play {
+      background: #fff3e0;
+      border: 2px dashed #ff9800;
+      padding: 10px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #e65100;
+    }
+
+    h1 { margin: 5px 0 0 0; font-size: 26px; color: #333; }
+    .tagline { margin-bottom: 10px; font-weight: bold; color: #ff4b2b; font-size: 12px; }
+    
+    .lock-box {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #ddd;
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .unlock-btn {
+      background: #333;
+      color: white;
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      border: none;
+      font-size: 16px;
+    }
+
+    .circle {
+      margin: 15px auto;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .item {
+      background: #fff5f5;
+      border: 2px solid #ffe0e0;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: 0.2s;
+    }
+
+    .active {
+      background: #00c853 !important;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px #00c853;
+      border-color: white;
+      z-index: 5;
+    }
+
+    .spin-btn {
+      background: #ff4b2b;
+      color: white;
+      width: 100%;
+      padding: 20px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: 900;
+      border: none;
+      box-shadow: 0 5px 0 #b71c1c;
+    }
+
+    .spin-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #b71c1c; }
+    .spin-btn:disabled { background: #ccc; box-shadow: none; }
+
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: 900;
+      min-height: 25px;
+      line-height: 1.4;
+    }
+
+    .admin-reset { 
+      margin-top: 20px; 
+      font-size: 11px; 
+      color: #999; 
+      text-decoration: underline; 
+      display: block;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="promo-banner">🎁 SPIN & WIN FREE FOOD! 🥤</div>
+    <h1>CRAVE CART</h1>
+    <div class="tagline">TASTE • CRAVE • REPEAT</div>
+
+    <div id="setup">
+      <div class="how-to-play">
+        <b>HOW TO PLAY?</b><br>
+        Ask the counter for your <b>Secret Code</b> after any purchase!
+      </div>
+      <div class="lock-box">
+        <input type="password" id="code" placeholder="Enter Code" inputmode="text">
+        <button class="unlock-btn" id="unlock">UNLOCK SPIN</button>
+      </div>
+    </div>
+
+    <div class="circle" id="circle">
+      <div class="item" data-name="Patishapta">🥞</div>
+      <div class="item" data-name="Makhana">🌶️</div>
+      <div class="item" data-name="Maggie Bhel">🍜</div>
+      <div class="item" data-name="Coffee">☕</div>
+      <div class="item" data-name="Choco Ball">🍫</div>
+      <div class="item" data-name="Malai Bread">🍞</div>
+      <div class="item" data-name="Chowmein">🍝</div>
+      <div class="item" data-name="Toffee">🍬</div>
+      <div class="item" data-name="Try Again">❌</div>
+    </div>
+
+    <button class="spin-btn" id="spin" disabled>START SPINNING!</button>
+    <div class="result" id="result"></div>
+    <a class="admin-reset" onclick="location.reload()">Next Customer Tap Here</a>
+  </div>
+
+<script>
+  const VALID_CODE = "CRAVE1123";
+  const items = document.querySelectorAll('.item');
+  const spinBtn = document.getElementById('spin');
+  const unlockBtn = document.getElementById('unlock');
+  const codeInput = document.getElementById('code');
+  const setupArea = document.getElementById('setup');
+  const result = document.getElementById('result');
+  
+  let spinsAvailable = 0;
+
+  unlockBtn.onclick = () => {
+    if (codeInput.value.toUpperCase() === VALID_CODE) {
+      setupArea.style.display = "none";
+      spinBtn.disabled = false;
+      spinsAvailable = 1; // Set spin count
+      result.textContent = ""; 
+    } else {
+      alert('Invalid Code! Please check with the counter.');
+      codeInput.value = "";
+    }
+  };
+
+  spinBtn.onclick = () => {
+    if (spinsAvailable <= 0) return;
+    
+    spinsAvailable--; // Use the spin
+    spinBtn.disabled = true;
+    result.style.color = "#333";
+    result.textContent = "Spinning...";
+
+    // PROBABILITY: 75% Common, 23% Mid, 2% Rare
+    const common = [3, 7, 8]; 
+    const mid = [1, 2, 4, 5, 6]; 
+    let targetIndex;
+    let roll = Math.random();
+
+    if (roll < 0.75) {
+      targetIndex = common[Math.floor(Math.random() * common.length)];
+    } else if (roll < 0.98) {
+      targetIndex = mid[Math.floor(Math.random() * mid.length)];
+    } else {
+      targetIndex = 0; // Rare Patishapta
+    }
+
+    let currentIndex = 0;
+    let totalSteps = 27 + targetIndex; 
+    let currentSpeed = 60;
+
+    function runSpin() {
+      items.forEach(i => i.classList.remove('active'));
+      items[currentIndex % items.length].classList.add('active');
+
+      if (currentIndex < totalSteps) {
+        currentIndex++;
+        if (currentIndex > totalSteps - 8) currentSpeed += 70; 
+        setTimeout(runSpin, currentSpeed);
+      } else {
+        const won = items[targetIndex];
+        const itemName = won.dataset.name;
+        
+        let winMessage = "";
+        if (itemName === "Try Again") {
+          winMessage = "<span style='color:#555'>Don't give up! Try again next visit! ✨</span>";
+        } else {
+          winMessage = "<span style='color:green'>YOU WON A FREE " + itemName.toUpperCase() + "! 🏆</span>";
+          document.body.style.background = "#ffd700";
+          setTimeout(() => { document.body.style.background = ""; }, 400);
+        }
+
+        // Show the result AND the "No spins left" message
+        result.innerHTML = winMessage + "<br><span style='color:#d32f2f; font-size: 14px;'>No spins left. Buy more to play!</span>";
+      }
+    }
+    runSpin();
+  };
+</script>
+</body>
+</html>
