@@ -11,10 +11,10 @@
     .promo-banner { background: #ffd700; color: #d32f2f; padding: 12px; border-radius: 15px; font-size: 16px; font-weight: 900; margin-bottom: 10px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
     .lock-box { background: #fff3e0; border: 2px dashed #ff9800; padding: 15px; border-radius: 20px; margin-bottom: 15px; color: #e65100; font-size: 14px; }
-    h1 { margin: 5px 0 0 0; font-size: 28px; color: #333; }
+    h1#secret-trigger { margin: 5px 0 0 0; font-size: 28px; color: #333; cursor: pointer; user-select: none; }
     .tagline { margin-bottom: 10px; font-weight: bold; color: #ff4b2b; font-size: 12px; }
     .circle { margin: 15px auto; width: 100%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 8px; }
-    .item { background: #fff5f5; border: 2px solid #ffe0e0; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; transition: 0.2s; cursor: pointer; }
+    .item { background: #fff5f5; border: 2px solid #ffe0e0; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; transition: 0.2s; }
     .active { background: #00c853 !important; transform: scale(1.1); box-shadow: 0 0 15px #00c853; border-color: white; z-index: 5; }
     .spin-btn { background: #ff4b2b; color: white; width: 100%; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: 900; border: none; box-shadow: 0 5px 0 #b71c1c; }
     .spin-btn:disabled { background: #ccc; box-shadow: none; }
@@ -25,7 +25,7 @@
 <body>
   <div class="app">
     <div class="promo-banner">🎁 SPIN & WIN FREE FOOD! 🥤</div>
-    <h1>CRAVE CART</h1>
+    <h1 id="secret-trigger">CRAVE CART</h1>
     <div class="tagline">TASTE • CRAVE • REPEAT</div>
 
     <div id="setup" class="lock-box">
@@ -41,7 +41,7 @@
       <div class="item" data-name="Choco Ball">🍫</div>
       <div class="item" data-name="Malai Bread">🍞</div>
       <div class="item" data-name="Chowmein">🍝</div>
-      <div class="item" data-name="Toffee" id="secret-trigger">🍬</div>
+      <div class="item" data-name="Toffee">🍬</div>
       <div class="item" data-name="Try Again">❌</div>
     </div>
 
@@ -60,14 +60,10 @@
   const result = document.getElementById('result');
   let spinsAvailable = 0;
 
-  // SECRET UNLOCK: Tap the Toffee (🍬) 3 times quickly
   secretTrigger.onclick = () => {
-    if (spinsAvailable > 0) return; // Don't trigger if already unlocked
-    
     clickCount++;
     clearTimeout(clickTimer);
-    clickTimer = setTimeout(() => { clickCount = 0; }, 800); 
-
+    clickTimer = setTimeout(() => { clickCount = 0; }, 500);
     if (clickCount === 3) {
       setupArea.innerHTML = "<b style='color:green'>UNLOCKED ✅</b><br>Good Luck!";
       setupArea.style.background = "#e8f5e9";
@@ -85,8 +81,11 @@
     result.style.color = "#333";
     result.textContent = "Spinning...";
 
+    // PROBABILITY SETTINGS
+    // 0:Patishapta, 1:Makhana, 2:Maggie, 3:Coffee, 4:ChocoBall, 5:MalaiBread, 6:Chowmein, 7:Toffee, 8:TryAgain
+    
     let targetIndex;
-    let roll = Math.random() * 100; 
+    let roll = Math.random() * 100; // 0 to 100
 
     if (roll < 80) {
       // 80% Chance: Coffee(3), Toffee(7), Try Again(8)
