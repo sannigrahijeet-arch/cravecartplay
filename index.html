@@ -11,10 +11,13 @@
     .promo-banner { background: #ffd700; color: #d32f2f; padding: 12px; border-radius: 15px; font-size: 16px; font-weight: 900; margin-bottom: 10px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
     .lock-box { background: #fff3e0; border: 2px dashed #ff9800; padding: 15px; border-radius: 20px; margin-bottom: 15px; color: #e65100; font-size: 14px; }
-    h1#secret-trigger { margin: 5px 0 0 0; font-size: 28px; color: #333; cursor: pointer; user-select: none; }
+    
+    /* SECRET TRIGGER: The Title */
+    h1#secret-tap { margin: 5px 0 0 0; font-size: 28px; color: #333; cursor: pointer; user-select: none; }
+    
     .tagline { margin-bottom: 10px; font-weight: bold; color: #ff4b2b; font-size: 12px; }
-    .circle { margin: 15px auto; width: 100%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 8px; }
-    .item { background: #fff5f5; border: 2px solid #ffe0e0; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; transition: 0.2s; }
+    .circle { margin: 15px auto; width: 100%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .item { background: #fff5f5; border: 2px solid #ffe0e0; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: 0.2s; }
     .active { background: #00c853 !important; transform: scale(1.1); box-shadow: 0 0 15px #00c853; border-color: white; z-index: 5; }
     .spin-btn { background: #ff4b2b; color: white; width: 100%; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: 900; border: none; box-shadow: 0 5px 0 #b71c1c; }
     .spin-btn:disabled { background: #ccc; box-shadow: none; }
@@ -25,7 +28,8 @@
 <body>
   <div class="app">
     <div class="promo-banner">🎁 SPIN & WIN FREE FOOD! 🥤</div>
-    <h1 id="secret-trigger">CRAVE CART</h1>
+    
+    <h1 id="secret-tap">CRAVE CART</h1>
     <div class="tagline">TASTE • CRAVE • REPEAT</div>
 
     <div id="setup" class="lock-box">
@@ -47,56 +51,55 @@
 
     <button class="spin-btn" id="spin" disabled>START SPINNING!</button>
     <div class="result" id="result"></div>
-    <a class="admin-reset" onclick="location.reload()">Next Customer Tap Here</a>
+    <a class="admin-reset" onclick="location.reload()">Next Customer</a>
   </div>
 
 <script>
   let clickCount = 0;
   let clickTimer;
-  const items = document.querySelectorAll('.item');
-  const spinBtn = document.getElementById('spin');
-  const secretTrigger = document.getElementById('secret-trigger');
-  const setupArea = document.getElementById('setup');
-  const result = document.getElementById('result');
   let spinsAvailable = 0;
 
-  secretTrigger.onclick = () => {
+  const items = document.querySelectorAll('.item');
+  const spinBtn = document.getElementById('spin');
+  const result = document.getElementById('result');
+  const setupArea = document.getElementById('setup');
+  const tapTrigger = document.getElementById('secret-tap');
+
+  // SECRET UNLOCK: Tap "CRAVE CART" 3 times
+  tapTrigger.onclick = () => {
+    if (spinsAvailable > 0) return;
     clickCount++;
     clearTimeout(clickTimer);
-    clickTimer = setTimeout(() => { clickCount = 0; }, 500);
+    clickTimer = setTimeout(() => { clickCount = 0; }, 600); 
+
     if (clickCount === 3) {
       setupArea.innerHTML = "<b style='color:green'>UNLOCKED ✅</b><br>Good Luck!";
       setupArea.style.background = "#e8f5e9";
       setupArea.style.borderColor = "#4caf50";
       spinBtn.disabled = false;
-      spinsAvailable = 1; 
+      spinsAvailable = 1;
       clickCount = 0;
     }
   };
 
   spinBtn.onclick = () => {
     if (spinsAvailable <= 0) return;
-    spinsAvailable--; 
+    spinsAvailable--;
     spinBtn.disabled = true;
     result.style.color = "#333";
     result.textContent = "Spinning...";
 
-    // PROBABILITY SETTINGS
-    // 0:Patishapta, 1:Makhana, 2:Maggie, 3:Coffee, 4:ChocoBall, 5:MalaiBread, 6:Chowmein, 7:Toffee, 8:TryAgain
-    
+    // ODDS: 88% Common / 7% Mid / 5% Rare
     let targetIndex;
-    let roll = Math.random() * 100; // 0 to 100
+    let roll = Math.random() * 100; 
 
-    if (roll < 80) {
-      // 80% Chance: Coffee(3), Toffee(7), Try Again(8)
-      const options = [3, 7, 8];
+    if (roll < 88) {
+      const options = [3, 7, 8]; // Coffee, Toffee, Try Again
       targetIndex = options[Math.floor(Math.random() * options.length)];
-    } else if (roll < 90) {
-      // 10% Chance: Choco Ball(4)
-      targetIndex = 4;
+    } else if (roll < 95) {
+      targetIndex = 4; // Choco Ball (7%)
     } else {
-      // 10% Chance: Chowmein(6), Malai Bread(5), Patishapta(0)
-      const options = [6, 5, 0];
+      const options = [0, 5, 6]; // Patishapta, Malai Bread, Chowmein (5%)
       targetIndex = options[Math.floor(Math.random() * options.length)];
     }
 
@@ -113,13 +116,12 @@
         if (currentIndex > totalSteps - 8) currentSpeed += 70; 
         setTimeout(runSpin, currentSpeed);
       } else {
-        const won = items[targetIndex];
-        const itemName = won.dataset.name;
-        let winMessage = "";
-        if (itemName === "Try Again") {
-          winMessage = "<span style='color:#555'>Don't give up! Try again next visit! ✨</span>";
-        } else {
-          winMessage = "<span style='color:green'>YOU WON A FREE " + itemName.toUpperCase() + "! 🏆</span>";
+        const won = items[targetIndex].dataset.name;
+        let winMessage = won === "Try Again" ? 
+            "<span style='color:#555'>Don't give up! Try again next visit! ✨</span>" : 
+            "<span style='color:green'>WINNER: FREE " + won.toUpperCase() + "! 🏆</span>";
+        
+        if (won !== "Try Again") {
           document.body.style.background = "#ffd700";
           setTimeout(() => { document.body.style.background = ""; }, 400);
         }
